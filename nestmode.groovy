@@ -1,5 +1,5 @@
 /**
- *  Nest Mode based on ST Mode
+ *  Nest Auto Home/Away
  *
  *  Copyright 2015 Rodden Shaw
  *
@@ -14,10 +14,10 @@
  *
  */
 definition(
-    name: "Nest Mode based on ST Mode",
+    name: "Nest Auto Home/Away",
     namespace: "roddenshaw",
     author: "Rodden Shaw",
-    description: "Changes Nest to away/present based on ST mode",
+    description: "Sets Nest thermostat to 'present' or 'away' based on ST 'away' mode.",
     category: "Mode Magic",
     iconUrl: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience.png",
     iconX2Url: "https://s3.amazonaws.com/smartapp-icons/Convenience/Cat-Convenience@2x.png",
@@ -27,26 +27,26 @@ definition(
 preferences {
 
   section("Change this thermostat's mode...") {
-    input "thermostats", "capability.thermostat", multiple: true
+    input "thermostat", "capability.thermostat"
   }
 }
 
 def installed() {
-  subscribe(location, "mode", modeChangeHandler)
+  subscribe(location, modeChangeHandler)
 }
-
 def updated() {
   unsubscribe()
-  subscribe(location, "mode", modeChangeHandler)
+  subscribe(location, modeChangeHandler)
 }
-
-def modeChangeHandler(evt) {
-  if(mode == "Away") {
-    thermostats?.away()
-		log.debug "Nest is set to Away."
+def modeChangeHandler(evt) 
+{
+	log.debug "mode changed to ${evt.value}"
+  if(evt.value == "Away") {
+    log.info("Changing to away")
+    thermostat?.away()
   }
-  else {
-    thermostats?.present()
-		log.debug "Nest is set to Home."
-        }
+  else{
+    log.info("Changing to present")
+    thermostat?.present()
   }
+}
